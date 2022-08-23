@@ -37,4 +37,36 @@ def get_film_by_title(title) -> dict or None:
     return json.dumps(film_info)
 
 
-print(get_film_by_title("#Alive"))
+def get_film_by_select_years(from_years, to_years):
+    """
+    Делает выборгу фильмоb по годам выпуска, принимая 2 значения от и до
+    """
+
+    query = """
+                        SELECT title, release_year
+                        FROM netflix
+                        WHERE release_year BETWEEN (?) AND (?)
+                        ORDER BY release_year
+                        LIMIT 100
+                    """
+    item = connection_sql_base(query, (from_years, to_years))
+    item_1 = item.fetchall()
+
+    if item_1 is None:
+        return "Такого фильма не найдено"
+
+    list_film = []
+    for i in item_1:
+        films = {
+            "title": i[0],
+            "release_year": i[1],
+        }
+        list_film.append(films)
+
+    return json.dumps(list_film)
+
+
+#
+# lol  = get_film_by_select_yers(1945, 1960)
+# # for i in lol:
+# print(lol)

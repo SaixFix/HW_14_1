@@ -3,12 +3,12 @@ from flask import Flask, request
 import json
 import sqlite3
 
-from utils import get_film_by_title
+from utils import get_film_by_title, get_film_by_select_years
 
 app = Flask(__name__)
 
 
-@app.get('/movie/<title>')
+@app.route('/movie/<title>')
 def search_title(title):
     """
     Выдает фильм по назваонию
@@ -18,8 +18,22 @@ def search_title(title):
 
     result = get_film_by_title(title)
 
-    if result != dict:
-        return result
+    return result
+
+
+@app.route('/movie/year/to/year')
+def search_movie_by_years():
+    """
+    Выдает список фильмов по указанному диапозону лет
+    """
+    a = request.args['a']
+    b = request.args['b']
+    result = get_film_by_select_years(a, b)
+
+    # if a != int or a == '':
+    #     abort(404)
+    # elif b != int or b == '':
+    #     abort(404)
 
     return result
 
