@@ -3,7 +3,7 @@ from flask import Flask, request
 import json
 import sqlite3
 
-from utils import get_film_by_title, get_film_by_select_years, get_film_by_rating
+from utils import get_film_by_title, get_film_by_select_years, get_film_by_rating, get_film_by_genre
 
 app = Flask(__name__)
 
@@ -57,6 +57,14 @@ def movie_by_rating_adult():
     """
     rating = ("R", "NC-17")
     return get_film_by_rating(rating)
+
+
+@app.route('/genre/<genre>')
+def movie_by_genre(genre):
+    """
+    Принимает жанр, возвращает список фильмов по жару с
+    """
+    return get_film_by_genre(genre)
 
 
 
