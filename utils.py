@@ -112,31 +112,60 @@ def get_film_by_genre(genre):
     return json.dumps(list_film)
 
 
-# def who_with_who(genre):
-#     """
-#     Функция, которая получает название жанра в качестве аргумента и возвращает 10 самых свежих фильмов
-#     """
-#     query = f"""
-#                         SELECT cast, description
-#                         FROM netflix
-#                         WHERE cast LIKE "%{genre}%"
-#                         ORDER BY release_year DESC
-#                         LIMIT 10
-#                     """
-#     item = connection_sql_base(query)
-#
-#     list_film = []
-#     for i in item:
-#         films = {
-#             "title": i[0],
-#             "description": i[1],
-#         }
-#         list_film.append(films)
-#
-#     return json.dumps(list_film)
+def who_with_who(name1, name2):
+    """
+    Функция, которая получает в качестве аргумента имена двух актеров, сохраняет всех
+    актеров из колонки cast и возвращает список тех, кто играет с ними в паре больше 2 раз.
+    """
+    query = f"""
+                        SELECT "cast"
+                        FROM netflix
+                        WHERE "cast" LIKE '%{name1}%'
+                        AND "cast" LIKE '%{name2}%'
+                    """
+    item = connection_sql_base(query)
+
+    list_cast = []
+    dict_names = {}
+
+    for i in item:
+        i_list = i[0].split(", ")
+        for name in i_list:
+            if name.strip() not in dict_names.keys():
+                dict_names[name] = 1
+            else:
+                dict_names[name] = dict_names[name] + 1
+
+    del dict_names['Rose McIver']
+    del dict_names['Ben Lamb']
+
+    for key, value in dict_names.items():
+        if value > 2:
+            list_cast.append(key)
+
+    return list_cast
 
 
-#
-# lol  = get_film_by_select_yers(1945, 1960)
-# # for i in lol:
-print(get_film_by_genre("Action"))
+def what_the_type(type, year, genre):
+    """
+    функция, с помощью которой можно будет передавать тип картины (фильм или сериал),
+    год выпуска и ее жанр и получать на выходе список названий картин с их описаниями в JSON.
+    """
+    query = f"""                                        
+                         SELECT title, description                  
+                         FROM netflix                    
+                         WHERE type = '{type}'   
+                         AND release_year = '{year}'
+                         AND listed_in LIKE '%{genre}%'    
+                   """
+    item = connection_sql_base(query)
+
+    list_film = []
+    for i in item:
+        films = {
+            "title": i[0],
+            "description": i[1],
+        }
+        list_film.append(films)
+
+    return json.dumps(list_film)
