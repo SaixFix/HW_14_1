@@ -16,14 +16,12 @@ def search_title(title):
     return result
 
 
-@app.route('/movie/year/to/year')
-def search_movie_by_years():
+@app.route('/movie/<int:year1>/to/<int:year2>')
+def search_movie_by_years(year1, year2):
     """
     Выдает список фильмов по указанному диапозону лет
     """
-    a = request.args['a']
-    b = request.args['b']
-    result = get_film_by_select_years(a, b)
+    result = get_film_by_select_years(year1, year2)
 
     return result
 
